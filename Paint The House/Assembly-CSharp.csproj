@@ -59,6 +59,7 @@
      <Compile Include="Assets\C#_Scripts\LevelGenerator.cs" />
      <Compile Include="Assets\C#_Scripts\PaintBrush.cs" />
      <Compile Include="Assets\C#_Scripts\VectorExt.cs" />
+     <Compile Include="Assets\C#_Scripts\WallLevel.cs" />
      <Compile Include="Assets\C#_Scripts\WallManager.cs" />
      <Compile Include="Assets\C#_Scripts\WallTile.cs" />
  <Reference Include="Unity.Timeline.Editor">
