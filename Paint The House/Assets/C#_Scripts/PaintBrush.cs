@@ -18,7 +18,7 @@ public class PaintBrush : MonoBehaviour
 
     void Awake()
     {
-        paintColor = GetComponentInChildren<MeshRenderer>().material.color + new Color(0.1f, 0.1f, 0.1f, 1f);
+        paintColor = GetComponentInChildren<MeshRenderer>().material.color + new Color(0.3f, 0.3f, 0.3f, 1f);
     }
 
     void FixedUpdate()

@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\C#_Scripts\ColorExt.cs" />
+     <Compile Include="Assets\C#_Scripts\FPS_Counter.cs" />
      <Compile Include="Assets\C#_Scripts\GenericTile.cs" />
      <Compile Include="Assets\C#_Scripts\Hitscan.cs" />
      <Compile Include="Assets\C#_Scripts\LevelGenerator.cs" />
