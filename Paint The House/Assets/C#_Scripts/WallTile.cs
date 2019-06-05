@@ -2,34 +2,22 @@
 
 public class WallTile : MonoBehaviour
 {
-    public static GameObject obstacle = null;
-    public bool isObstacle = false;
-    private static Material paintedMat = null;
     public bool isPainted { get; private set; } = false;
 
-    void Awake()
-    {
-        if (obstacle == null) obstacle = Resources.Load<GameObject>("Prefabs/Obstacle_Panel");
-
-        if (isObstacle)
-        {
-            Instantiate(obstacle, transform.position, Quaternion.identity, transform.parent);
-            Destroy(gameObject);
-        }
-
-
-        if(paintedMat == null) paintedMat = Resources.Load<Material>("Materials/Painted_Panel");
-    }
-
-    public void paintWall()
+    public void paintWall(PaintBrush brush)
     {
         if(!isPainted)
         {
-            MeshRenderer wallMesh = GetComponent<MeshRenderer>();
+            //Checks that it's in the brush is the same level
+            if(brush.transform.parent == transform.parent)
+            {
+                MeshRenderer wallMesh = GetComponent<MeshRenderer>();
+                Material wallMat = wallMesh.material;
+                wallMat.color = brush.paintColor;
+                wallMesh.material = wallMat;
 
-            wallMesh.material = paintedMat;
-
-            isPainted = true;
+                isPainted = true;
+            }
         }
     }
 }

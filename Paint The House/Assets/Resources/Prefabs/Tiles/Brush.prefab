@@ -60,7 +60,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brushSpeed: 10
-  paintFX: {fileID: 6836086224147480530}
+  deadzone: 5
+  testValues: {x: 0, y: 0}
+  deadzoneTestTrigger: 0
 --- !u!1 &1631288781092724500
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,7 +120,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8544c828ba9721c43848b3ee19dfc9b8, type: 2}
+  - {fileID: 2100000, guid: 3c55aa59d7504464688362ceaa215c1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -210,12 +212,6 @@ PrefabInstance:
 --- !u!4 &6836086224147480531 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5112545283752585564, guid: 4e82556844020ea4f8ec93faf12d109b,
-    type: 3}
-  m_PrefabInstance: {fileID: 1742260744338773647}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &6836086224147480530 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 5112545283752585565, guid: 4e82556844020ea4f8ec93faf12d109b,
     type: 3}
   m_PrefabInstance: {fileID: 1742260744338773647}
   m_PrefabAsset: {fileID: 0}

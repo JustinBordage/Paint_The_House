@@ -77,12 +77,6 @@
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>D:/Unity_2019/Paint_The_House/Paint The House/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>
- <Reference Include="Unity.RenderPipelines.Lightweight.Runtime">
- <HintPath>D:/Unity_2019/Paint_The_House/Paint The House/Library/ScriptAssemblies/Unity.RenderPipelines.Lightweight.Runtime.dll</HintPath>
- </Reference>
- <Reference Include="Unity.RenderPipelines.Lightweight.Editor">
- <HintPath>D:/Unity_2019/Paint_The_House/Paint The House/Library/ScriptAssemblies/Unity.RenderPipelines.Lightweight.Editor.dll</HintPath>
- </Reference>
  <Reference Include="Unity.PackageManagerUI.Editor">
  <HintPath>D:/Unity_2019/Paint_The_House/Paint The House/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
  </Reference>
@@ -92,14 +86,8 @@
  <Reference Include="Unity.CollabProxy.Editor">
  <HintPath>D:/Unity_2019/Paint_The_House/Paint The House/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
  </Reference>
- <Reference Include="Unity.Postprocessing.Editor">
- <HintPath>D:/Unity_2019/Paint_The_House/Paint The House/Library/ScriptAssemblies/Unity.Postprocessing.Editor.dll</HintPath>
- </Reference>
  <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
  <HintPath>D:/Unity_2019/Paint_The_House/Paint The House/Library/ScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
- </Reference>
- <Reference Include="Unity.Postprocessing.Runtime">
- <HintPath>D:/Unity_2019/Paint_The_House/Paint The House/Library/ScriptAssemblies/Unity.Postprocessing.Runtime.dll</HintPath>
  </Reference>
  <Reference Include="Unity.ShaderGraph.Editor">
  <HintPath>D:/Unity_2019/Paint_The_House/Paint The House/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>

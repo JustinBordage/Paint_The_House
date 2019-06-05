@@ -9,15 +9,19 @@ public class PaintBrush : MonoBehaviour
     private Vector3 dest;
     private float distTraveled;
     private float prevDistance;
-    [SerializeField] private ParticleSystem paintFX;
+    public int deadzone = 5;
+    public Color paintColor { get; private set; }
+
+
+    public Vector2 testValues;
+    public bool deadzoneTestTrigger = false;
 
     void Awake()
     {
-        paintFX.Pause();
+        paintColor = GetComponentInChildren<MeshRenderer>().material.color + new Color(0.1f, 0.1f, 0.1f, 1f);
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (isMoving)
         {
@@ -26,32 +30,37 @@ public class PaintBrush : MonoBehaviour
         else
         {
             if (Input.touchCount > 0)
-            {
-                Vector2 touchDelta = Input.GetTouch(0).deltaPosition;
+                getBrushDestination(Input.GetTouch(0).deltaPosition);
+        }
 
-                touchDelta.x = Mathf.Round(touchDelta.x / 10);
-                touchDelta.y = Mathf.Round(touchDelta.y / 10);
-
-                getBrushDestination(touchDelta);
-            }
+        if (deadzoneTestTrigger)
+        {
+            getBrushDestination(testValues);
+            deadzoneTestTrigger = false;
         }
     }
 
     private void getBrushDestination(Vector2 dir)
     {
-        //if (isMoving)
-        //    return;
+        //Calculates the absolute value of the
+        Vector2 absDir = new Vector2(Mathf.Abs(dir.x), Mathf.Abs(dir.y));
 
-        if (Mathf.Abs(dir.x) >= Mathf.Abs(dir.y))
-            dir.y = 0f;
-        else
-            dir.x = 0f;
+        //Exits if no movement will occur or if not above the deadzone
+        if ((absDir.x < deadzone && absDir.y < deadzone)
+            || absDir.x == absDir.y)
+            return;
 
-        dir = dir.normalized;
+        //Checks for the larger axis, if
+        //both the same(dir == Vector2.Zero)
+        dir.x *= (absDir.x > absDir.y).GetHashCode();
+        dir.y *= (absDir.x < absDir.y).GetHashCode();
+        ///"GetHashCode" gets bool value (F == 0, T == 1)
 
-        RaycastHit hit;
+        //Normalizes the vector
+        dir.Normalize();
 
         //Checks for obstacles and map edges
+        RaycastHit hit;
         if (Physics.Raycast(transform.position, dir, out hit, 10f, 1 << 11))
         {
             Vector2 currPos = transform.position;
@@ -65,14 +74,13 @@ public class PaintBrush : MonoBehaviour
             dest = transform.position + new Vector3(translateBy.x, translateBy.y);
             prevDistance = VectorExt.vertDist(dest, transform.position);
             isMoving = true;
-            paintFX.Play();
         }
     }
 
     private void translateBrush()
     {
         //Moves the brush towards the destination
-        transform.position = Vector3.Lerp(transform.position, dest, Time.deltaTime * brushSpeed);
+        transform.position = Vector3.Lerp(transform.position, dest, Time.fixedDeltaTime * brushSpeed);
 
         //Calculates the distance to the objective
         float distToDest = VectorExt.vertDist(dest, transform.position);
@@ -82,7 +90,6 @@ public class PaintBrush : MonoBehaviour
         //Checks if the brush has reached it's destination
         if (distToDest < 0.05f)
         {
-            paintFX.Pause();
             isMoving = false;
             distTraveled += 0.05f;
             transform.position = dest;
@@ -104,7 +111,7 @@ public class PaintBrush : MonoBehaviour
 
         for(int hit = 0; hit < hitList.Length; hit++)
         {
-            hitList[hit].collider.GetComponent<WallTile>().paintWall();
+            hitList[hit].collider.GetComponent<WallTile>().paintWall(this);
         }
     }
 
@@ -113,7 +120,7 @@ public class PaintBrush : MonoBehaviour
     {
         if(other.tag == "Wall")
         {
-            other.GetComponent<WallTile>().paintWall();
+            other.GetComponent<WallTile>().paintWall(this);
         }
     }
 }

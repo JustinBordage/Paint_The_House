@@ -21,8 +21,6 @@ public class WallManager : MonoBehaviour
 
         wallLevels = GetComponentsInChildren<WallLevel>();
 
-        Debug.Log("Size: " + wallLevels.Length);
-
         //Disables all the other levels
         for (int wallLevel = 1; wallLevel < wallLevels.Length; wallLevel++)
         {
@@ -39,10 +37,17 @@ public class WallManager : MonoBehaviour
     {
         if(debugTrigger)
         {
+            //Disables the previous level
+            wallLevels[currentLevel].isLvlPlayable(false);
+
+            //Increases the level index
             currentLevel++;
 
             if (currentLevel < wallLevels.Length)
             {
+                //Enables the next level
+                wallLevels[currentLevel].isLvlPlayable(true);
+
                 wallLevels[currentLevel].gameObject.SetActive(true);
                 newEulerAngle = roof.rotation.eulerAngles.y + 90f;
                 rotating = true;
@@ -57,7 +62,7 @@ public class WallManager : MonoBehaviour
 
     public void checkWall(PaintBrush brush)
     {
-        //Checks if the wall level is complete (Bug here)
+        //Checks if the wall level is complete (Bug here Not sure what it was)
         if(wallLevels[currentLevel].verifyWalls())
         {
             currentLevel++;
@@ -88,6 +93,9 @@ public class WallManager : MonoBehaviour
                 currRot.y = newEulerAngle;
                 rotating = false;
                 wallLevels[currentLevel - 1].gameObject.SetActive(false);
+
+                //Enables the next level
+                wallLevels[currentLevel].isLvlPlayable(true);
             }
 
             roof.rotation = Quaternion.Euler(currRot);
