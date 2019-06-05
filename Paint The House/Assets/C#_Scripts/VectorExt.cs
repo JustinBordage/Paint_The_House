@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VectorExt : MonoBehaviour
+public static class VectorExt
 {
     public static float vertDist(Vector2 a, Vector2 b)
     {

@@ -5,45 +5,67 @@ public class WallManager : MonoBehaviour
 {
     public Text testTextBox;
 
+    public bool debugTrigger = false;
     [SerializeField] private Transform roof;
-    private WallLevel[] wallLvlList;
+    private WallLevel[] wallLevels;
     int currentLevel = 0;
     bool rotating = false;
     float newEulerAngle;
     
-    //Singleton Pattern
+    //Singleton Pattern (Set up by the loading Manager)
     public static WallManager mInstance = null;
+
+    public void Initialize()
+    {
+        if (mInstance == null) mInstance = this;
+
+        wallLevels = GetComponentsInChildren<WallLevel>();
+
+        Debug.Log("Size: " + wallLevels.Length);
+
+        //Disables all the other levels
+        for (int wallLevel = 1; wallLevel < wallLevels.Length; wallLevel++)
+        {
+            wallLevels[wallLevel].gameObject.SetActive(false);
+        }
+    }
 
     void Start()
     {
-        wallLvlList = GetComponentsInChildren<WallLevel>();
-
-        Debug.Log("Size: " + wallLvlList.Length);
-
-        //Disables all the other levels
-        for (int wallLevel = 1; wallLevel < wallLvlList.Length; wallLevel++)
-        {
-            wallLvlList[wallLevel].gameObject.SetActive(false);
-        }
-
-        if (mInstance == null) mInstance = this;
+        Initialize();
     }
 
     void Update()
     {
-        rotateLevel();
-    }
-
-    public void checkWall()
-    {
-        //Checks if the wall level is complete (Bug here)
-        if(wallLvlList[currentLevel].verifyWalls())
+        if(debugTrigger)
         {
             currentLevel++;
 
-            if (currentLevel < wallLvlList.Length)
+            if (currentLevel < wallLevels.Length)
             {
-                wallLvlList[currentLevel].gameObject.SetActive(true);
+                wallLevels[currentLevel].gameObject.SetActive(true);
+                newEulerAngle = roof.rotation.eulerAngles.y + 90f;
+                rotating = true;
+            }
+
+            debugTrigger = false;
+        }
+
+
+        rotateLevel();
+    }
+
+    public void checkWall(PaintBrush brush)
+    {
+        //Checks if the wall level is complete (Bug here)
+        if(wallLevels[currentLevel].verifyWalls())
+        {
+            currentLevel++;
+            Destroy(brush.gameObject);
+
+            if (currentLevel < wallLevels.Length)
+            {
+                wallLevels[currentLevel].gameObject.SetActive(true);
                 newEulerAngle = roof.rotation.eulerAngles.y + 90f;
                 rotating = true;
                 testTextBox.text = "You Won Level " + currentLevel + "!";
@@ -65,7 +87,7 @@ public class WallManager : MonoBehaviour
             {
                 currRot.y = newEulerAngle;
                 rotating = false;
-                wallLvlList[currentLevel - 1].gameObject.SetActive(false);
+                wallLevels[currentLevel - 1].gameObject.SetActive(false);
             }
 
             roof.rotation = Quaternion.Euler(currRot);

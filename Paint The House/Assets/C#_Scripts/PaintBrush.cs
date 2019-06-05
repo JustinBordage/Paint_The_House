@@ -7,12 +7,13 @@ public class PaintBrush : MonoBehaviour
     public float brushSpeed;
     public bool isMoving { get; private set; } = false;
     private Vector3 dest;
+    private float distTraveled;
+    private float prevDistance;
+    [SerializeField] private ParticleSystem paintFX;
 
-
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        paintFX.Pause();
     }
 
     // Update is called once per frame
@@ -33,18 +34,6 @@ public class PaintBrush : MonoBehaviour
 
                 getBrushDestination(touchDelta);
             }
-
-            /*if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 wallTilePos = Hitscan.screenPos(Input.mousePosition);
-
-                if (wallTilePos == Vector3.zero)
-                    return;
-
-                Vector2 dir = wallTilePos - transform.position;
-
-                getBrushDestination(dir);
-            }*/
         }
     }
 
@@ -72,40 +61,50 @@ public class PaintBrush : MonoBehaviour
             translateBy.x *= Mathf.Abs(dir.x);
             translateBy.y *= Mathf.Abs(dir.y);
 
+            distTraveled = 0f;
             dest = transform.position + new Vector3(translateBy.x, translateBy.y);
+            prevDistance = VectorExt.vertDist(dest, transform.position);
             isMoving = true;
+            paintFX.Play();
         }
     }
 
     private void translateBrush()
     {
-        
-
         //Moves the brush towards the destination
         transform.position = Vector3.Lerp(transform.position, dest, Time.deltaTime * brushSpeed);
-        
+
+        //Calculates the distance to the objective
+        float distToDest = VectorExt.vertDist(dest, transform.position);
+        distTraveled += Mathf.Abs(prevDistance - distToDest);
+        prevDistance = distToDest;
+
+        //Checks if the brush has reached it's destination
+        if (distToDest < 0.05f)
+        {
+            paintFX.Pause();
+            isMoving = false;
+            distTraveled += 0.05f;
+            transform.position = dest;
+            WallManager.mInstance.checkWall(this);
+        }
+
         //Sometimes the brush moves too fast
         //this will paint those missed walls
         paintTheWall();
-        
-        //Checks if the brush has reached it's destination
-        if (VectorExt.vertDist(dest, transform.position) < 0.05f)
-        {
-            transform.position = dest;
-            isMoving = false;
-        
-            WallManager.mInstance.checkWall();
-        }
     }
 
-    //Catches any missed walls
+    //Paints the tiles between the beginning and the end
     private void paintTheWall()
     {
-        RaycastHit hit;
+        RaycastHit[] hitList;
         Vector3 dir = transform.position - dest;
-        if (Physics.Raycast(transform.position, dir, out hit, 0.4f, 1 << 10))
+
+        hitList = Physics.RaycastAll(transform.position, dir.normalized, distTraveled, 1 << 10);
+
+        for(int hit = 0; hit < hitList.Length; hit++)
         {
-            hit.collider.GetComponent<WallTile>().paintWall();
+            hitList[hit].collider.GetComponent<WallTile>().paintWall();
         }
     }
 
@@ -118,3 +117,29 @@ public class PaintBrush : MonoBehaviour
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+///Old Testing Input
+
+/*if (Input.GetMouseButtonDown(0))
+{
+    Vector3 wallTilePos = Hitscan.screenPos(Input.mousePosition);
+
+    if (wallTilePos == Vector3.zero)
+        return;
+
+    Vector2 dir = wallTilePos - transform.position;
+
+    getBrushDestination(dir);
+}*/

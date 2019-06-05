@@ -55,8 +55,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\C#_Scripts\ColorExt.cs" />
+     <Compile Include="Assets\C#_Scripts\GenericTile.cs" />
      <Compile Include="Assets\C#_Scripts\Hitscan.cs" />
      <Compile Include="Assets\C#_Scripts\LevelGenerator.cs" />
+     <Compile Include="Assets\C#_Scripts\LoadingManager.cs" />
      <Compile Include="Assets\C#_Scripts\PaintBrush.cs" />
      <Compile Include="Assets\C#_Scripts\VectorExt.cs" />
      <Compile Include="Assets\C#_Scripts\WallLevel.cs" />
