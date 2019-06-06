@@ -12,31 +12,30 @@ public class PaintBrush : MonoBehaviour
     public int deadzone = 5;
     public Color paintColor { get; private set; }
 
-
-    public Vector2 testValues;
-    public bool deadzoneTestTrigger = false;
+    private static AudioPlayer audioPlayer;
 
     void Awake()
     {
+        //Fetches the paintColor
         paintColor = GetComponentInChildren<MeshRenderer>().material.color + new Color(0.3f, 0.3f, 0.3f, 1f);
+
+        //Fetches the audioPlayer
+        if(audioPlayer == null)
+            audioPlayer = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioPlayer>();
     }
 
     void FixedUpdate()
     {
         if (isMoving)
         {
+            //Performs the object translation
             translateBrush();
         }
         else
         {
+            //Translates the brush if the swipe is long enough
             if (Input.touchCount > 0)
                 getBrushDestination(Input.GetTouch(0).deltaPosition);
-        }
-
-        if (deadzoneTestTrigger)
-        {
-            getBrushDestination(testValues);
-            deadzoneTestTrigger = false;
         }
     }
 
@@ -49,6 +48,7 @@ public class PaintBrush : MonoBehaviour
         if ((absDir.x < deadzone && absDir.y < deadzone)
             || absDir.x == absDir.y)
             return;
+
 
         //Checks for the larger axis, if
         //both the same(dir == Vector2.Zero)
@@ -63,17 +63,28 @@ public class PaintBrush : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, dir, out hit, 10f, 1 << 11))
         {
+            //Fetches the current and obstacle positions
             Vector2 currPos = transform.position;
             Vector2 obstaclePos = hit.collider.transform.position;
 
-            Vector2 translateBy = (obstaclePos - currPos) - dir;
+            //Calculates the distance to travel
+            Vector3 translateBy = (obstaclePos - currPos) - dir;
             translateBy.x *= Mathf.Abs(dir.x);
             translateBy.y *= Mathf.Abs(dir.y);
 
-            distTraveled = 0f;
-            dest = transform.position + new Vector3(translateBy.x, translateBy.y);
-            prevDistance = VectorExt.vertDist(dest, transform.position);
-            isMoving = true;
+            //Calculates the distance to the destination
+            dest = transform.position + translateBy;
+            float distance = VectorExt.vertDist(dest, transform.position);
+
+            //Triggers the Translation
+            if(distance > 0f)
+            {
+                isMoving = true;
+                audioPlayer.playSFX("BrushSwoosh");
+                prevDistance = distance;
+                distTraveled = 0f;
+            }
+
         }
     }
 
@@ -90,6 +101,7 @@ public class PaintBrush : MonoBehaviour
         //Checks if the brush has reached it's destination
         if (distToDest < 0.05f)
         {
+            //Stops the translation
             isMoving = false;
             distTraveled += 0.05f;
             transform.position = dest;
@@ -101,14 +113,17 @@ public class PaintBrush : MonoBehaviour
         paintTheWall();
     }
 
-    //Paints the tiles between the beginning and the end
+    //Catches any tiles that were missed by the 
     private void paintTheWall()
     {
+        //Variables
         RaycastHit[] hitList;
         Vector3 dir = transform.position - dest;
 
+        //Checks all the tiles in the path that it has travelled so far
         hitList = Physics.RaycastAll(transform.position, dir.normalized, distTraveled, 1 << 10);
 
+        //Paints those tiles
         for(int hit = 0; hit < hitList.Length; hit++)
         {
             hitList[hit].collider.GetComponent<WallTile>().paintWall(this);

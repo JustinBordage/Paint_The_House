@@ -3,22 +3,23 @@ using UnityEngine.UI;
 
 public class WallManager : MonoBehaviour
 {
-    public Text testTextBox;
-
-    public bool debugTrigger = false;
-    [SerializeField] private Transform roof;
+    //Variables
+    [SerializeField] private GameObject WinMenu;
+    [SerializeField] private Transform house;
     private WallLevel[] wallLevels;
     int currentLevel = 0;
     bool rotating = false;
     float newEulerAngle;
-    
-    //Singleton Pattern (Set up by the loading Manager)
+
+    //Singleton Pattern
     public static WallManager mInstance = null;
 
     public void Initialize()
     {
+        //Initializes the Singleton pattern
         if (mInstance == null) mInstance = this;
 
+        //Fetches the Level Walls
         wallLevels = GetComponentsInChildren<WallLevel>();
 
         //Disables all the other levels
@@ -33,30 +34,8 @@ public class WallManager : MonoBehaviour
         Initialize();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if(debugTrigger)
-        {
-            //Disables the previous level
-            wallLevels[currentLevel].isLvlPlayable(false);
-
-            //Increases the level index
-            currentLevel++;
-
-            if (currentLevel < wallLevels.Length)
-            {
-                //Enables the next level
-                wallLevels[currentLevel].isLvlPlayable(true);
-
-                wallLevels[currentLevel].gameObject.SetActive(true);
-                newEulerAngle = roof.rotation.eulerAngles.y + 90f;
-                rotating = true;
-            }
-
-            debugTrigger = false;
-        }
-
-
         rotateLevel();
     }
 
@@ -65,18 +44,22 @@ public class WallManager : MonoBehaviour
         //Checks if the wall level is complete (Bug here Not sure what it was)
         if(wallLevels[currentLevel].verifyWalls())
         {
+            //Increases the level
+            //and destroys the brush
             currentLevel++;
             Destroy(brush.gameObject);
 
+            //If there's another level
             if (currentLevel < wallLevels.Length)
             {
+                //Swaps the level through rotating the walls
                 wallLevels[currentLevel].gameObject.SetActive(true);
-                newEulerAngle = roof.rotation.eulerAngles.y + 90f;
+                newEulerAngle = house.rotation.eulerAngles.y + 90f;
                 rotating = true;
-                testTextBox.text = "You Won Level " + currentLevel + "!";
             }
             else
-                testTextBox.text = "You Painted the House!";
+                //If it was the last level display the win menu
+                WinMenu.SetActive(true);
         }
     }
 
@@ -84,21 +67,25 @@ public class WallManager : MonoBehaviour
     {
         if(rotating)
         {
-            Vector3 currRot = roof.rotation.eulerAngles;
+            //Gets the current rotation
+            Vector3 currRot = house.rotation.eulerAngles;
 
+            //Rotates the wall if the final angle hasn't been reached
             if (Mathf.Abs(newEulerAngle - currRot.y) > 0.2f)
                 currRot.y = Mathf.Lerp(currRot.y, newEulerAngle, 10f * Time.deltaTime);
             else
             {
-                currRot.y = newEulerAngle;
+                //Stops rotating the wall
                 rotating = false;
+                currRot.y = newEulerAngle;
                 wallLevels[currentLevel - 1].gameObject.SetActive(false);
 
-                //Enables the next level
+                //Enables the next level playability (allows player input)
                 wallLevels[currentLevel].isLvlPlayable(true);
             }
 
-            roof.rotation = Quaternion.Euler(currRot);
+            //Applies the new rotation
+            house.rotation = Quaternion.Euler(currRot);
         }
     }
 

@@ -12,6 +12,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boundry
       objectReference: {fileID: 0}
+    - target: {fileID: 7731700547394747072, guid: bd8d6e9ebb39e3945992fae9a1e855a0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 7731700547394747073, guid: bd8d6e9ebb39e3945992fae9a1e855a0,
         type: 3}
       propertyPath: m_LocalPosition.x

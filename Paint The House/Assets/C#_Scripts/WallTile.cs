@@ -11,7 +11,7 @@ public class WallTile : MonoBehaviour
             //Checks that it's in the brush is the same level
             if(brush.transform.parent == transform.parent)
             {
-                MeshRenderer wallMesh = GetComponent<MeshRenderer>();
+                MeshRenderer wallMesh = GetComponentInChildren<MeshRenderer>();
                 Material wallMat = wallMesh.material;
                 wallMat.color = brush.paintColor;
                 wallMesh.material = wallMat;
