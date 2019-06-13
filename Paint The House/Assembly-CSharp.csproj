@@ -57,12 +57,8 @@
   <ItemGroup>
      <Compile Include="Assets\C#_Scripts\AudioPlayer.cs" />
      <Compile Include="Assets\C#_Scripts\ColorExt.cs" />
-     <Compile Include="Assets\C#_Scripts\DeveloperOnly\FPS_Counter.cs" />
-     <Compile Include="Assets\C#_Scripts\DeveloperOnly\GenericTile.cs" />
-     <Compile Include="Assets\C#_Scripts\DeveloperOnly\LevelGenerator.cs" />
-     <Compile Include="Assets\C#_Scripts\DeveloperOnly\LoadingManager.cs" />
-     <Compile Include="Assets\C#_Scripts\DeveloperOnly\MultiTile.cs" />
-     <Compile Include="Assets\C#_Scripts\DeveloperOnly\SaveManager.cs" />
+     <Compile Include="Assets\C#_Scripts\FPS_Counter.cs" />
+     <Compile Include="Assets\C#_Scripts\GenericTile.cs" />
      <Compile Include="Assets\C#_Scripts\Hitscan.cs" />
      <Compile Include="Assets\C#_Scripts\PaintBrush.cs" />
      <Compile Include="Assets\C#_Scripts\SceneLoader.cs" />
