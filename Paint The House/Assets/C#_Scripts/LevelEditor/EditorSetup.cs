@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+public enum WallDir { Front, Right, Rear, Left }
+
 namespace LvlEditor
 {
-    public enum WallDir { Front, Right, Rear, Left }
-
     public class EditorSetup : MonoBehaviour
     {
         GameObject tilePrefab = null;

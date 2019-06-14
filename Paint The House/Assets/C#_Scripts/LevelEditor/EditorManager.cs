@@ -212,6 +212,8 @@ namespace LvlEditor
             Debug.Log(_bytes.Length / 1024 + "Kb was saved as: \'" + _fullPath + "\'");
         }
 
+
+
         void OnDestroy()
         {
             Instance = null;

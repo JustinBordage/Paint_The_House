@@ -26,33 +26,33 @@ public class EditorTile : MonoBehaviour
 
     Color getTileColor()
     {
-        Color tileColor = Color.white;
+        Color tileColor = Color.white; //FFFFFF
 
         switch (type)
         {
             case EditorType.Brush:
-                tileColor = Color.red;
+                tileColor = Color.red; //FF0000
                 break;
             case EditorType.Door:
-                tileColor = ColorExt.brown;
+                tileColor = ColorExt.brown; //654321
                 break;
             case EditorType.Window:
-                tileColor = Color.cyan;
+                tileColor = Color.cyan; //00FFFF
                 break;
             case EditorType.Wood:
-                tileColor = Color.yellow;
+                tileColor = Color.yellow; //FFEB04
                 break;
             case EditorType.Power:
-                tileColor = Color.grey;
+                tileColor = Color.grey; //808080
                 break;
             case EditorType.Vent:
-                tileColor = Color.black;
+                tileColor = Color.black; //000000
                 break;
             case EditorType.Mail:
-                tileColor = Color.magenta;
+                tileColor = Color.magenta; //FF00FF
                 break;
             case EditorType.Bush:
-                tileColor = Color.green;
+                tileColor = Color.green; //00FF00
                 break;
             default:
                 if (type != EditorType.Wall)
