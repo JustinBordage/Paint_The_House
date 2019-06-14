@@ -9,6 +9,9 @@ TagManager:
   - WallManager
   - AudioManager
   - SceneLoader
+  - Canvas
+  - TileSelector
+  - EditorSetup
   layers:
   - Default
   - TransparentFX
