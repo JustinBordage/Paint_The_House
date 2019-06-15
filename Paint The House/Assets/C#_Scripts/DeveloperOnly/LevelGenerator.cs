@@ -20,14 +20,6 @@ public class LevelGenerator : MonoBehaviour
     const string MAIL_TILE = "FF00FF";      //Mail 
     const string POWER_TILE = "808080";     //Power
     const string DOOR_TILE = "654321";      //Door X
-    //FF0000
-    //654321
-     //00FFFF
-     //FFEB04
-     //808080
-     //000000
-     //FF00FF
-    //00FF00
 
     public void generateWall()
     {
@@ -75,14 +67,19 @@ public class LevelGenerator : MonoBehaviour
         spawnTiles(level, wall);
     }
 
-    void spawnTiles(Texture2D levelImg, Transform parent)
+    public void spawnTiles(Texture2D levelImg, Transform parent)
     {
-        float width = levelImg.width;
-        float height = levelImg.height;
+        int width = levelImg.width;
+        int height = levelImg.height;
+
+        Debug.Log("Test: (" + width + ", " + height + ")");
 
         Vector2 centerPos = new Vector2((tileSize.x * width - tileSize.x) * 0.5f, (tileSize.y * height - tileSize.y) * 0.5f);
         Vector3 tilePos = Vector3.zero;
         GameObject paintObj = null;
+
+
+        GameObject boundry = Resources.Load<GameObject>(mDirectory + "Boundry");
 
         int x, y;
         for (x = 0; x < width; x++)
@@ -106,6 +103,28 @@ public class LevelGenerator : MonoBehaviour
                 }
             }
         }
+
+        //Spawns the boundries
+
+        //Top
+        paintObj = Instantiate(boundry, Vector3.zero, Quaternion.identity, parent);
+        paintObj.transform.localPosition = Vector2.up * (height + tileSize.y) * 0.5f;
+        paintObj.transform.localScale = new Vector3(width, 1f, 1f);
+
+        //Down
+        paintObj = Instantiate(boundry, Vector3.zero, Quaternion.identity, parent);
+        paintObj.transform.localPosition = Vector2.down * (height + tileSize.y) * 0.5f;
+        paintObj.transform.localScale = new Vector3(width, 1f, 1f);
+
+        //Right
+        paintObj = Instantiate(boundry, Vector3.zero, Quaternion.identity, parent);
+        paintObj.transform.localPosition = Vector2.right * (width + tileSize.x) * 0.5f;
+        paintObj.transform.localScale = new Vector3(1f, height, 1f);
+
+        //Left
+        paintObj = Instantiate(boundry, Vector3.zero, Quaternion.identity, parent);
+        paintObj.transform.localPosition = Vector2.left * (width + tileSize.x) * 0.5f;
+        paintObj.transform.localScale = new Vector3(1f, height, 1f);
     }
 
     List<GameObject> getTilePrefab(Color pixelColor)

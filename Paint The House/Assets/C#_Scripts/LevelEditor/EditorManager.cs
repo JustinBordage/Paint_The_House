@@ -25,6 +25,8 @@ namespace LvlEditor
         private const string filename = "default";
         private const string path = "Assets\\";
 
+        GameObject playtestLvl = null;
+
         void Awake()
         {
             if (Instance == null)
@@ -140,12 +142,33 @@ namespace LvlEditor
             return tileCoords;
         }
 
+        public Texture2D wallToPNG(Transform wall, int offset, Texture2D levelTexture)
+        {
+            int tile;
+            Vector2Int tileCoords;
+            EditorTile wallTile;
+
+            //Populates the wall tile colors
+            for (tile = 0; tile < wall.childCount; tile++)
+            {
+                wallTile = wall.GetChild(tile).GetComponent<EditorTile>();
+
+                tileCoords = parseTileCoords(wallTile.name);
+
+                levelTexture.SetPixel(tileCoords.x + offset, tileCoords.y, wallTile.TileColor);
+            }
+
+            //Applies the pixel changes
+            levelTexture.Apply();
+
+            return levelTexture;
+        }
+
         public void SaveLevel()
         {
             //Indexing Variables
-            int tile, y;
+            int y;
             int offset = 0;
-            Vector2Int tileCoords;
 
             //Texture Creation
             Texture2D levelTexture = new Texture2D(widthFB * 2 + widthLR * 2 + 3, height);
@@ -153,32 +176,13 @@ namespace LvlEditor
 
             //Scene Objects
             Transform wall;
-            EditorTile wallTile;
-
-            //Failsafe for the Developer
-            bool brushExists = false;
 
             for (int wallIndex = 0; wallIndex < 4; wallIndex++)
             {
                 //Retrieves the wall
                 wall = wallList[wallIndex];
 
-                //Populates the wall tile colors
-                for (tile = 0; tile < wall.childCount; tile++)
-                {
-                    wallTile = wall.GetChild(tile).GetComponent<EditorTile>();
-
-                    tileCoords = parseTileCoords(wallTile.name);
-
-                    if (wallTile.type == EditorType.Brush)
-                        brushExists = true;
-
-                    levelTexture.SetPixel(tileCoords.x + offset, tileCoords.y, wallTile.TileColor);
-                }
-
-                //Safeguard
-                if (!brushExists)
-                    Debug.LogError("No brush exists on " + ((WallDir) wallIndex).ToString() + " wall ");
+                levelTexture = wallToPNG(wall, offset, levelTexture);
 
                 //Offsets by the wall's width
                 if (wallIndex != 1)
@@ -212,7 +216,40 @@ namespace LvlEditor
             Debug.Log(_bytes.Length / 1024 + "Kb was saved as: \'" + _fullPath + "\'");
         }
 
+        public void StartPlaytest()
+        {
+            //Determines the width of the test wall
+            int width;
+            if (currWall == 0 || currWall == 2)
+                width = widthFB;
+            else
+                width = widthLR;
 
+            //Converts the current wall to a PNG
+            Texture2D levelTexture = new Texture2D(width, height);
+            levelTexture = wallToPNG(wallList[currWall], 0, levelTexture);
+
+            //Creates a level parent object (to make destruction easier later)
+            playtestLvl = new GameObject("Playtest_Level");
+
+            //Creates the playtest level
+            GameObject generator = GameObject.FindGameObjectWithTag("LevelGenerator");
+            LevelGenerator lvlGen = generator.GetComponent<LevelGenerator>();
+            lvlGen.spawnTiles(levelTexture, playtestLvl.transform);
+
+            wallList[currWall].gameObject.SetActive(false);
+        }
+
+        public void StopPlaytest()
+        {
+            if(playtestLvl != null)
+            {
+                Destroy(playtestLvl);
+                playtestLvl = null;
+
+                wallList[currWall].gameObject.SetActive(true);
+            }
+        }
 
         void OnDestroy()
         {

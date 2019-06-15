@@ -12,7 +12,7 @@ TagManager:
   - Canvas
   - TileSelector
   - EditorSetup
-  - TestLevel
+  - LevelGenerator
   layers:
   - Default
   - TransparentFX
