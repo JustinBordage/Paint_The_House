@@ -3,3 +3,7 @@
 /Paint_The_House/.idea
 /Paint_The_House/Builds
 /Paint_The_House/obj/Debug
+Paint_The_House/*.csproj
+*.bakert
+Paint_The_House/Temp/UnityLockfile
+/Paint_The_House/Temp
