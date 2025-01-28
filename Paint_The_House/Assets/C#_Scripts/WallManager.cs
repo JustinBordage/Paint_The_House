@@ -36,13 +36,13 @@ public class WallManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        rotateLevel();
+        RotateLevel();
     }
 
-    public void checkWall(PaintBrush brush)
+    public void CheckWall(PaintBrush brush)
     {
         //Checks if the wall level is complete (Bug here Not sure what it was)
-        if(wallLevels[currentLevel].verifyWalls())
+        if(wallLevels[currentLevel].VerifyWalls())
         {
             //Increases the level
             //and destroys the brush
@@ -63,7 +63,7 @@ public class WallManager : MonoBehaviour
         }
     }
 
-    public void rotateLevel()
+    public void RotateLevel()
     {
         if(rotating)
         {
@@ -81,7 +81,7 @@ public class WallManager : MonoBehaviour
                 wallLevels[currentLevel - 1].gameObject.SetActive(false);
 
                 //Enables the next level playability (allows player input)
-                wallLevels[currentLevel].isLvlPlayable(true);
+                wallLevels[currentLevel].IsLvlPlayable(true);
             }
 
             //Applies the new rotation

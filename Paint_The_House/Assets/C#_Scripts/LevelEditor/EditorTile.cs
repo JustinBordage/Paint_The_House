@@ -6,7 +6,7 @@ using LvlEditor;
 
 public class EditorTile : MonoBehaviour
 {
-    public Color TileColor { get { return getTileColor(); } }
+    public Color TileColor { get { return GetTileColor(); } }
     public EditorType type { get; private set; } = EditorType.Wall;
     Image tileImage = null;
 
@@ -24,7 +24,7 @@ public class EditorTile : MonoBehaviour
         }
     }
 
-    Color getTileColor()
+    Color GetTileColor()
     {
         Color tileColor = Color.white; //FFFFFF
 
@@ -72,7 +72,7 @@ public class EditorTile : MonoBehaviour
 
     void PaintTile()
     {
-        Color tColor = getTileColor();
+        Color tColor = GetTileColor();
 
         tileImage.color = tColor;
     }

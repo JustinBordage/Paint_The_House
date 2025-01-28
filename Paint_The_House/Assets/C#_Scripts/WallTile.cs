@@ -4,7 +4,7 @@ public class WallTile : MonoBehaviour
 {
     public bool isPainted { get; private set; } = false;
 
-    public void paintWall(PaintBrush brush)
+    public void PaintWall(PaintBrush brush)
     {
         if(!isPainted)
         {

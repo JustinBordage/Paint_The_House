@@ -12,19 +12,19 @@ public class SceneLoader : MonoBehaviour
         SceneChanging = false;
     }
 
-    public void reloadScene()
+    public void ReloadScene()
     {
         Scene currScene = SceneManager.GetActiveScene();
 
-        StartCoroutine(loadSceneAsync(currScene.name));
+        StartCoroutine(LoadSceneAsync(currScene.name));
     }
 
-    public void loadScene(string sceneName)
+    public void LoadScene(string sceneName)
     {
-        StartCoroutine(loadSceneAsync(sceneName));
+        StartCoroutine(LoadSceneAsync(sceneName));
     }
 
-    IEnumerator loadSceneAsync(string sceneName)
+    IEnumerator LoadSceneAsync(string sceneName)
     {
         SceneChanging = true;
 

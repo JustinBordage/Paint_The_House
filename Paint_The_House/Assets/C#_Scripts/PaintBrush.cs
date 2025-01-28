@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PaintBrush : MonoBehaviour
 {
@@ -29,17 +27,17 @@ public class PaintBrush : MonoBehaviour
         if (isMoving)
         {
             //Performs the object translation
-            translateBrush();
+            TranslateBrush();
         }
         else
         {
             //Translates the brush if the swipe is long enough
             if (Input.touchCount > 0)
-                getBrushDestination(Input.GetTouch(0).deltaPosition);
+                GetBrushDestination(Input.GetTouch(0).deltaPosition);
         }
     }
 
-    private void getBrushDestination(Vector2 dir)
+    private void GetBrushDestination(Vector2 dir)
     {
         //Calculates the absolute value of the
         Vector2 absDir = new Vector2(Mathf.Abs(dir.x), Mathf.Abs(dir.y));
@@ -74,13 +72,13 @@ public class PaintBrush : MonoBehaviour
 
             //Calculates the distance to the destination
             dest = transform.position + translateBy;
-            float distance = VectorExt.vertDist(dest, transform.position);
+            float distance = VectorExt.VertDist(dest, transform.position);
 
             //Triggers the Translation
             if(distance > 0f)
             {
                 isMoving = true;
-                audioPlayer.playSFX("BrushSwoosh");
+                audioPlayer.PlaySFX("BrushSwoosh");
                 prevDistance = distance;
                 distTraveled = 0f;
             }
@@ -88,13 +86,13 @@ public class PaintBrush : MonoBehaviour
         }
     }
 
-    private void translateBrush()
+    private void TranslateBrush()
     {
         //Moves the brush towards the destination
         transform.position = Vector3.Lerp(transform.position, dest, Time.fixedDeltaTime * brushSpeed);
 
         //Calculates the distance to the objective
-        float distToDest = VectorExt.vertDist(dest, transform.position);
+        float distToDest = VectorExt.VertDist(dest, transform.position);
         distTraveled += Mathf.Abs(prevDistance - distToDest);
         prevDistance = distToDest;
 
@@ -105,16 +103,16 @@ public class PaintBrush : MonoBehaviour
             isMoving = false;
             distTraveled += 0.05f;
             transform.position = dest;
-            WallManager.mInstance.checkWall(this);
+            WallManager.mInstance.CheckWall(this);
         }
 
         //Sometimes the brush moves too fast
         //this will paint those missed walls
-        paintTheWall();
+        PaintTheWall();
     }
 
     //Catches any tiles that were missed by the 
-    private void paintTheWall()
+    private void PaintTheWall()
     {
         //Variables
         RaycastHit[] hitList;
@@ -126,7 +124,7 @@ public class PaintBrush : MonoBehaviour
         //Paints those tiles
         for(int hit = 0; hit < hitList.Length; hit++)
         {
-            hitList[hit].collider.GetComponent<WallTile>().paintWall(this);
+            hitList[hit].collider.GetComponent<WallTile>().PaintWall(this);
         }
     }
 
@@ -135,7 +133,7 @@ public class PaintBrush : MonoBehaviour
     {
         if(other.tag == "Wall")
         {
-            other.GetComponent<WallTile>().paintWall(this);
+            other.GetComponent<WallTile>().PaintWall(this);
         }
     }
 }

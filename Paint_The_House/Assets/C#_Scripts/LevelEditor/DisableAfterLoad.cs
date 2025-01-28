@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DisableAfterLoad : MonoBehaviour
 {
-    void disableObj()
+    void DisableObj()
     {
         //Sets the object inactive
         gameObject.SetActive(false);
@@ -17,6 +17,6 @@ public class DisableAfterLoad : MonoBehaviour
     void Start()
     {
         //Wait for 0.002 seconds (to allow scripts to load)
-        Invoke("disableObj", 0.002f);
+        Invoke("DisableObj", 0.002f);
     }
 }

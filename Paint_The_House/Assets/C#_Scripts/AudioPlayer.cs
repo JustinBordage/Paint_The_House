@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AudioPlayer : MonoBehaviour
 {
@@ -13,10 +11,10 @@ public class AudioPlayer : MonoBehaviour
 
     void Start()
     {
-        initAudio(0f);
+        InitAudio(0f);
     }
 
-    protected void initAudio(float spatialSetting)
+    protected void InitAudio(float spatialSetting)
     {
         //Compiles the list audio source channels
         channelList = GetComponents<AudioSource>();
@@ -31,7 +29,7 @@ public class AudioPlayer : MonoBehaviour
     }
 
 
-    protected AudioSource getChannel()
+    protected AudioSource GetChannel()
     {
         //Searches for the first channel that isn't being used
         foreach (AudioSource channel in channelList)
@@ -48,7 +46,7 @@ public class AudioPlayer : MonoBehaviour
         return null;
     }
 
-    AudioClip getAudioClip(string callback)
+    AudioClip GetAudioClip(string callback)
     {
         //Retrieves the AudioClip based on the callback
         foreach (AudioClip clip in soundList)
@@ -62,7 +60,7 @@ public class AudioPlayer : MonoBehaviour
         return null;
     }
 
-    protected void playAudio(ref AudioSource channel, ref AudioClip clip)
+    protected void PlayAudio(ref AudioSource channel, ref AudioClip clip)
     {
         if (channel != null && clip != null)
         {
@@ -77,15 +75,15 @@ public class AudioPlayer : MonoBehaviour
         }
     }
 
-    public void playSFX(string callback)
+    public void PlaySFX(string callback)
     {
         //Retrieves the channel required to play the sound
-        AudioSource channel = getChannel();
+        AudioSource channel = GetChannel();
 
         //Retrieves the AudioClip to play based on the callback
-        AudioClip clip = getAudioClip(callback);
+        AudioClip clip = GetAudioClip(callback);
 
         //Plays the audio
-        playAudio(ref channel, ref clip);
+        PlayAudio(ref channel, ref clip);
     }
 }

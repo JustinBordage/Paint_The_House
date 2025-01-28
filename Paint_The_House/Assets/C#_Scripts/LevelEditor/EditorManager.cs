@@ -44,7 +44,7 @@ namespace LvlEditor
             }
         }
 
-        public Transform[] getWallList()
+        public Transform[] GetWallList()
         {
             if (wallList == null)
             {
@@ -85,7 +85,7 @@ namespace LvlEditor
             BrushTile = (EditorType)dropDownIndex;
         }
 
-        public void wipeEditor()
+        public void WipeEditor()
         {
             foreach (Transform wall in wallList)
             {
@@ -98,7 +98,7 @@ namespace LvlEditor
             editorSetup.SetActive(true);
         }
 
-        public void swapWall(int indexMod)
+        public void SwapWall(int indexMod)
         {
             //Disables the previous wall
             wallList[currWall].gameObject.SetActive(false);
@@ -116,7 +116,7 @@ namespace LvlEditor
             wallList[currWall].gameObject.SetActive(true);
         }
 
-        private Vector2Int parseTileCoords(string tileName)
+        private Vector2Int ParseTileCoords(string tileName)
         {
             int x = -1, y = -1;
             Vector2Int tileCoords = Vector2Int.zero;
@@ -142,7 +142,7 @@ namespace LvlEditor
             return tileCoords;
         }
 
-        public Texture2D wallToPNG(Transform wall, int offset, Texture2D levelTexture)
+        public Texture2D WallToPNG(Transform wall, int offset, Texture2D levelTexture)
         {
             int tile;
             Vector2Int tileCoords;
@@ -153,7 +153,7 @@ namespace LvlEditor
             {
                 wallTile = wall.GetChild(tile).GetComponent<EditorTile>();
 
-                tileCoords = parseTileCoords(wallTile.name);
+                tileCoords = ParseTileCoords(wallTile.name);
 
                 levelTexture.SetPixel(tileCoords.x + offset, tileCoords.y, wallTile.TileColor);
             }
@@ -182,7 +182,7 @@ namespace LvlEditor
                 //Retrieves the wall
                 wall = wallList[wallIndex];
 
-                levelTexture = wallToPNG(wall, offset, levelTexture);
+                levelTexture = WallToPNG(wall, offset, levelTexture);
 
                 //Offsets by the wall's width
                 if (wallIndex != 1)
@@ -227,7 +227,7 @@ namespace LvlEditor
 
             //Converts the current wall to a PNG
             Texture2D levelTexture = new Texture2D(width, height);
-            levelTexture = wallToPNG(wallList[currWall], 0, levelTexture);
+            levelTexture = WallToPNG(wallList[currWall], 0, levelTexture);
 
             //Creates a level parent object (to make destruction easier later)
             playtestLvl = new GameObject("Playtest_Level");
@@ -235,7 +235,7 @@ namespace LvlEditor
             //Creates the playtest level
             GameObject generator = GameObject.FindGameObjectWithTag("LevelGenerator");
             LevelGenerator lvlGen = generator.GetComponent<LevelGenerator>();
-            lvlGen.spawnTiles(levelTexture, playtestLvl.transform);
+            lvlGen.SpawnTiles(levelTexture, playtestLvl.transform);
 
             wallList[currWall].gameObject.SetActive(false);
         }

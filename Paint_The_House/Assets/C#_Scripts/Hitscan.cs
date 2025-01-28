@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Hitscan : MonoBehaviour
 {
-    public static Vector3 screenPos(Vector3 position)
+    public static Vector3 ScreenPos(Vector3 position)
     {
         Camera mainCam = Camera.main;
 

@@ -27,7 +27,7 @@ namespace LvlEditor
             int height = EditorManager.height = (int)heightSlider.value;
 
             //Fetches a list of the walls
-            Transform[] wallList = EditorManager.Instance.getWallList();
+            Transform[] wallList = EditorManager.Instance.GetWallList();
 
             //Creates the walls
             spawnWall(widthFB, height, wallList[(int)WallDir.Front]);

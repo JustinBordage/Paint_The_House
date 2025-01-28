@@ -21,12 +21,12 @@ public class LevelGenerator : MonoBehaviour
     const string POWER_TILE = "808080";     //Power
     const string DOOR_TILE = "654321";      //Door X
 
-    public void generateWall()
+    public void GenerateWall()
     {
         SpawnWall("Level1", WallDir.Front);
     }
 
-    void applyWallOffset(Transform wall, WallDir direction)
+    void ApplyWallOffset(Transform wall, WallDir direction)
     {
         float angle = 0f;
         Vector3 offset = Vector3.zero;
@@ -62,12 +62,12 @@ public class LevelGenerator : MonoBehaviour
 
         //Creates the wall parent object and adjusts it's rotation/offset
         Transform wall = new GameObject(direction.ToString()).transform;
-        applyWallOffset(wall, direction);
+        ApplyWallOffset(wall, direction);
 
-        spawnTiles(level, wall);
+        SpawnTiles(level, wall);
     }
 
-    public void spawnTiles(Texture2D levelImg, Transform parent)
+    public void SpawnTiles(Texture2D levelImg, Transform parent)
     {
         int width = levelImg.width;
         int height = levelImg.height;
@@ -86,7 +86,7 @@ public class LevelGenerator : MonoBehaviour
         {
             for (y = 0; y < height; y++)
             {
-                List<GameObject> objList = getTilePrefab(levelImg.GetPixel(x, y));
+                List<GameObject> objList = GetTilePrefab(levelImg.GetPixel(x, y));
 
                 foreach (GameObject prefab in objList)
                 {
@@ -127,7 +127,7 @@ public class LevelGenerator : MonoBehaviour
         paintObj.transform.localScale = new Vector3(1f, height, 1f);
     }
 
-    List<GameObject> getTilePrefab(Color pixelColor)
+    List<GameObject> GetTilePrefab(Color pixelColor)
     {
         string Hexcode = ColorUtility.ToHtmlStringRGB(pixelColor);
         List<GameObject> objList = new List<GameObject>();

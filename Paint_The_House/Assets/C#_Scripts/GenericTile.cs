@@ -23,7 +23,7 @@ public class GenericTile : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        spawnPrefab();
+        SpawnPrefab();
 
         Destroy(gameObject, 0.1f);
     }
@@ -73,14 +73,14 @@ public class GenericTile : MonoBehaviour
 
     }
 
-    void spawnObject(GameObject prefab)
+    void SpawnObject(GameObject prefab)
     {
         Transform parent = transform.parent;
 
         Instantiate(prefab, transform.position, transform.rotation, parent);
     }
 
-    void spawnPrefab()
+    void SpawnPrefab()
     {
         const string directory = "Prefabs/Tiles/";
 
@@ -92,7 +92,7 @@ public class GenericTile : MonoBehaviour
                 objName = "Wall_Panel";
                 break;
             case TileType.Brush:
-                spawnObject(Resources.Load<GameObject>("Prefabs/Tiles/Brush"));
+                SpawnObject(Resources.Load<GameObject>("Prefabs/Tiles/Brush"));
                 objName = "Wall_Panel";
                 break;
             case TileType.DoorU:
@@ -124,7 +124,7 @@ public class GenericTile : MonoBehaviour
         if(objName != "")
         {
             GameObject objToSpawn = Resources.Load<GameObject>(directory + objName);
-            spawnObject(objToSpawn);
+            SpawnObject(objToSpawn);
         }
     }
 

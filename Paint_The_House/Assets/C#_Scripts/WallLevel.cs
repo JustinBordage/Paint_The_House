@@ -11,19 +11,19 @@ public class WallLevel : MonoBehaviour
     void Start()
     {
         //Basically Generate Level Before Loading the scene
-        Invoke("registerLevel", 0.001f);
+        Invoke("RegisterLevel", 0.001f);
     }
 
     //Registers all the level's components
     //(which are children of this object)
-    public void registerLevel()
+    public void RegisterLevel()
     {
         wallList = GetComponentsInChildren<WallTile>();
         levelBrush = GetComponentInChildren<PaintBrush>().gameObject;
-        isLvlPlayable(name[5] == '0');
+        IsLvlPlayable(name[5] == '0');
     }
 
-    public bool verifyWalls()
+    public bool VerifyWalls()
     {
         //Exits if a wall is not painted
         foreach (WallTile wall in wallList)
@@ -36,7 +36,7 @@ public class WallLevel : MonoBehaviour
         return true;
     }
 
-    public void isLvlPlayable(bool playable)
+    public void IsLvlPlayable(bool playable)
     {
         levelBrush.gameObject.SetActive(playable);
     }
