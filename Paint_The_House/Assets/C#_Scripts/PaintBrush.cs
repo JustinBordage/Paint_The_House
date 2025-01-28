@@ -136,8 +136,14 @@ public class PaintBrush : MonoBehaviour
             isMoving = false;
             distTraveled += 0.05f;
             transform.position = dest;
-            WallManager.mInstance.CheckWall(this);
             lastDir = Vector2.zero;
+            
+            // The Wall Manager is not
+            // required on the Level Editor
+            if (WallManager.mInstance)
+            {
+                WallManager.mInstance.CheckWall(this);
+            }
         }
 
         //Sometimes the brush moves too fast
