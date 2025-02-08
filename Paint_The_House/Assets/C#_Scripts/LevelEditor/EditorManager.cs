@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -116,42 +118,137 @@ namespace LvlEditor
             wallList[currWall].gameObject.SetActive(true);
         }
 
+        /** Parses the coordinates from the tile game object's name.
+         *
+         *  @remark "tileName" is formatted as follows: "x_y_Tile" */
         private Vector2Int ParseTileCoords(string tileName)
         {
-            int x = -1, y = -1;
-            Vector2Int tileCoords = Vector2Int.zero;
-
-            for (x = 0; x < tileName.Length; x++)
+            var items = tileName.Split('_');
+            if (items.Length != 3 || items[2] != "Tile")
             {
-                if (tileName[x] == '_')
-                {
-                    tileCoords.x = int.Parse(tileName.Substring(0, x));
-                    break;
-                }
+                Debug.LogErrorFormat("Invalid tile coords for tile '{0}'", tileName);
+                return new Vector2Int(-1, -1);
             }
 
-            for (y = x + 1; y < tileName.Length; y++)
-            {
-                if (tileName[y] == '_')
-                {
-                    tileCoords.y = int.Parse(tileName.Substring(x + 1, y - (x + 1)));
-                    break;
-                }
-            }
-
-            return tileCoords;
+            int xPos = int.Parse(items[0]);
+            int yPos = int.Parse(items[1]);
+            return new Vector2Int(xPos, yPos);
         }
+        
+        private static T[,] FillArray<T>(T[,] array, T fillValue)
+        {
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
+                    array[i, j] = fillValue;
+                }
+            }
+
+            return array;
+        }
+        
+        private static void PrintArray<T>(T[,] array)
+        {
+            var map = "";
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                var line = "";
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
+                    line += array[i, j] + ", ";
+                }
+                
+                map += line.TrimEnd(',', ' ') + "\n";
+            }
+
+            Debug.Log(map);
+        }
+        
+        // private static TileType[,] FillTileArray(TileType[,] array, TileType fillValue)
+        // {
+        //     var length = array.GetLength(0);
+        //     for (int i = 0; i < length; i++)
+        //     {
+        //         var row = new int[length];
+        //         array.SetValue(i, row);
+        //         for (int j = 0; j < array.GetLength(1); j++)
+        //         {
+        //             array[i, j] = fillValue;
+        //         }
+        //     }
+        //
+        //     return array;
+        // }
+        //
+        // private static int[,] FillIntArray(int[,] array, int fillValue)
+        // {
+        //     for (int i = 0; i < array.GetLength(0); i++)
+        //     {
+        //         array.SetValue(i, new int[array.GetLength(0)]);
+        //         for (int j = 0; j < array.GetLength(1); j++)
+        //         {
+        //             array[i, j] = fillValue;
+        //         }
+        //     }
+        //
+        //     return array;
+        // }
+        
+        public HouseTileInfo[] WallToTileMap(Transform wall)
+        {
+            int childIndex;
+            Vector2Int tileCoords;
+            EditorTile wallTile;
+            List<HouseTileInfo> tileList = new List<HouseTileInfo>();
+        
+            // Populates the wall tile list
+            for (childIndex = 0; childIndex < wall.childCount; childIndex++)
+            {
+                wallTile = wall.GetChild(childIndex).GetComponent<EditorTile>();
+                var tileType = TileConverter.convert(wallTile.type);
+
+                if (tileType == TileType.Wall) continue;
+                
+                tileCoords = ParseTileCoords(wallTile.name);
+                tileList.Add(new HouseTileInfo(tileCoords, tileType));
+            }
+            
+            return tileList.ToArray();
+        }
+        
+        // public int[,] WallToTileMapAlt(Transform wall, int width, int height)
+        // {
+        //     int childIndex;
+        //     Vector2Int tileCoords;
+        //     EditorTile wallTile;
+        //     int[,] tileMap = FillArray(new int[width,height], (int) TileType.Wall);
+        //
+        //     // Populates the wall tile map
+        //     for (childIndex = 0; childIndex < wall.childCount; childIndex++)
+        //     {
+        //         wallTile = wall.GetChild(childIndex).GetComponent<EditorTile>();
+        //         var tileType = TileConverter.convert(wallTile.type);
+        //
+        //         if (tileType == TileType.Wall) continue;
+        //         
+        //         tileCoords = ParseTileCoords(wallTile.name);
+        //         tileMap[tileCoords.x, tileCoords.y] = (int) tileType;
+        //     }
+        //
+        //     return tileMap;
+        // }
 
         public Texture2D WallToPNG(Transform wall, int offset, Texture2D levelTexture)
         {
-            int tile;
+            int childIndex;
             Vector2Int tileCoords;
             EditorTile wallTile;
 
             //Populates the wall tile colors
-            for (tile = 0; tile < wall.childCount; tile++)
+            for (childIndex = 0; childIndex < wall.childCount; childIndex++)
             {
-                wallTile = wall.GetChild(tile).GetComponent<EditorTile>();
+                wallTile = wall.GetChild(childIndex).GetComponent<EditorTile>();
 
                 tileCoords = ParseTileCoords(wallTile.name);
 
@@ -164,11 +261,31 @@ namespace LvlEditor
             return levelTexture;
         }
 
+        private void formatLevel()
+        {
+            HouseLevel houseLevel = new HouseLevel();
+            houseLevel.height = height;
+            houseLevel.width = widthFB;
+            houseLevel.depth = widthLR;
+            
+            
+
+        }
+        
         public void SaveLevel()
         {
             //Indexing Variables
             int y;
             int offset = 0;
+            int wallWidth;
+            int wallWidthAlt;
+            
+            HouseLevel houseLevel = new HouseLevel
+            {
+                width = widthFB,
+                height = height,
+                depth = widthLR
+            };
 
             //Texture Creation
             Texture2D levelTexture = new Texture2D(widthFB * 2 + widthLR * 2 + 3, height);
@@ -183,14 +300,47 @@ namespace LvlEditor
                 wall = wallList[wallIndex];
 
                 levelTexture = WallToPNG(wall, offset, levelTexture);
+                
+                wallWidth = wallIndex % 2 == 0 ? widthFB : widthLR;
+                
+                var tileMap = WallToTileMap(wall);
+                
+                switch (wallIndex)
+                {
+                    case 0:
+                        Debug.Log("Setting Front Tiles");
+                        houseLevel.frontTiles = tileMap;
+                        break;
+                    case 1:
+                        Debug.Log("Setting Right Tiles");
+                        houseLevel.rightTiles = tileMap;
+                        break;
+                    case 2:
+                        Debug.Log("Setting Rear Tiles");
+                        houseLevel.backTiles = tileMap;
+                        break;
+                    case 3:
+                        Debug.Log("Setting Left Tiles");
+                        houseLevel.leftTiles = tileMap;
+                        break;
+                }
 
-                //Offsets by the wall's width
+                //Offsets by the wall's width (I get the feeling that this is a bug, shouldn't it use a modulus?)
                 if (wallIndex != 1)
                 {
+                    wallWidthAlt = widthFB;
                     offset += widthFB;
                 }
                 else
+                {
+                    wallWidthAlt = widthLR;
                     offset += widthLR;
+                }
+
+                if (wallWidthAlt != wallWidth)
+                {
+                    Debug.LogErrorFormat("[{0}] Wall Width Mismatch: {1} | {2}", wallIndex, wallWidth, wallWidthAlt);
+                }
 
                 //Adds a transparent spacer
                 for (y = 0; y < height; y++)
@@ -207,11 +357,24 @@ namespace LvlEditor
 
             //Saves the Texture as a PNG
             SaveLevelAsPNG(levelTexture, path + filename + ".png");
+            
+            string timeNow = DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd'T'HHmm'Z'");
+            SaveLevelAsJSON(houseLevel, path + filename + "_" + timeNow + ".json");
         }
 
         private void SaveLevelAsPNG(Texture2D _texture, string _fullPath)
         {
             byte[] _bytes = _texture.EncodeToPNG();
+            System.IO.File.WriteAllBytes(_fullPath, _bytes);
+            Debug.Log(_bytes.Length / 1024 + "Kb was saved as: \'" + _fullPath + "\'");
+        }
+        
+        private void SaveLevelAsJSON(HouseLevel levelData, string _fullPath)
+        {
+            var serializedLevelData = JsonUtility.ToJson(levelData);
+            Debug.Log(serializedLevelData);
+            
+            byte[] _bytes = Encoding.ASCII.GetBytes(serializedLevelData);
             System.IO.File.WriteAllBytes(_fullPath, _bytes);
             Debug.Log(_bytes.Length / 1024 + "Kb was saved as: \'" + _fullPath + "\'");
         }

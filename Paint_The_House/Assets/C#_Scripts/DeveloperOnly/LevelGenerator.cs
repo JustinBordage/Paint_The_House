@@ -72,8 +72,6 @@ public class LevelGenerator : MonoBehaviour
         int width = levelImg.width;
         int height = levelImg.height;
 
-        Debug.Log("Test: (" + width + ", " + height + ")");
-
         Vector2 centerPos = new Vector2((tileSize.x * width - tileSize.x) * 0.5f, (tileSize.y * height - tileSize.y) * 0.5f);
         Vector3 tilePos = Vector3.zero;
         GameObject paintObj = null;
@@ -97,7 +95,7 @@ public class LevelGenerator : MonoBehaviour
                     paintObj.name = prefab.name;
 
                     if (paintObj.name != "Brush")
-                        paintObj.name = x.ToString() + "_" + y.ToString() + "_" + paintObj.name;
+                        paintObj.name = x + "_" + y + "_" + paintObj.name;
 
                     paintObj.transform.localPosition = tilePos;
                 }

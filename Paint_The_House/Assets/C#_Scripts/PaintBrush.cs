@@ -1,7 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Linq;
+using UnityEngine;
 
 public class PaintBrush : MonoBehaviour
 {
+    [SerializeField] private float maxScanDistance = 10f;
+    
     public float brushSpeed;
     public bool isMoving { get; private set; } = false;
     private Vector3 dest;
@@ -13,6 +17,14 @@ public class PaintBrush : MonoBehaviour
     private Vector2 lastDir = Vector2.zero;
     
     private static AudioPlayer audioPlayer;
+    private LayerMask obstacleLayer;
+    private LayerMask wallLayer;
+    
+    
+    
+    // Debugging
+    private Vector3 prevRayCastOrigin = Vector3.zero;
+    private Vector3 prevRayCastDest = Vector3.zero;
 
     void Awake()
     {
@@ -22,6 +34,9 @@ public class PaintBrush : MonoBehaviour
         //Fetches the audioPlayer
         if(audioPlayer == null)
             audioPlayer = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioPlayer>();
+        
+        obstacleLayer = LayerMask.GetMask("Obstacle");
+        wallLayer = LayerMask.GetMask("Wall");
     }
 
     void FixedUpdate()
@@ -78,23 +93,50 @@ public class PaintBrush : MonoBehaviour
 
         //Checks for the larger axis, if
         //both the same(dir == Vector2.Zero)
-        dir.x *= (absDir.x > absDir.y).GetHashCode();
-        dir.y *= (absDir.x < absDir.y).GetHashCode();
-        ///"GetHashCode" gets bool value (F == 0, T == 1)
+        if (absDir.x > absDir.y)
+        {
+            dir.y = 0;
+        }
+        if (absDir.x < absDir.y)
+        {
+            dir.x = 0;
+        }
 
+        Debug.Log("[BEFORE] Direction: " + dir);
+        
         //Normalizes the vector
         dir.Normalize();
-
-        //Checks for obstacles and map edges
-        RaycastHit hit;
-        if (!Physics.Raycast(transform.position, dir, out hit, 10f, 1 << 11))
+        
+        //Checks for obstacles and map edges (Each tile has an invisible BoxCollider behind it, this is what the hit scan triggers on)
+        bool hitWall = false;
+        if (!Physics.Raycast(transform.position, dir, out var hit, maxScanDistance, obstacleLayer))
         {
+            // if (!FindFurthestWall(transform.position, dir, out hit, maxScanDistance, wallLayer))
+            // {
+            //     Debug.Log("Did not pick anything up");
+            //     return false;
+            // }
+            // else
+            // {
+            //     hitWall = true;
+            // }
             return false;
         }
+
+        prevRayCastOrigin = transform.position;
+        prevRayCastDest = hit.point;
+
+        Debug.Log("[AFTER] Direction: " + dir);
         
         //Fetches the current and obstacle positions
         Vector2 currPos = transform.position;
-        Vector2 obstaclePos = hit.collider.transform.position;
+
+        var hitObject = hit.collider.transform;
+        // Vector3 dimensions = hitObject.lossyScale; // Perhaps use the brush dimensions instead
+        // Debug.Log("[BEFORE] Size: " + dimensions);
+        // dimensions.Scale(hitWall ? dir : Vector2.zero);
+        // Debug.Log("[AFTER] Size: " + dimensions);
+        Vector2 obstaclePos = hitObject.position;// + dimensions;
 
         //Calculates the distance to travel
         Vector3 translateBy = (obstaclePos - currPos) - dir;
@@ -116,6 +158,25 @@ public class PaintBrush : MonoBehaviour
         prevDistance = distance;
         distTraveled = 0f;
         
+        return true;
+    }
+
+    private bool FindFurthestWall(
+        Vector3 origin,
+        Vector3 direction,
+        out RaycastHit hitInfo,
+        float maxDistance,
+        int layerMask
+    ) {
+        var allHits = Physics.RaycastAll(origin, direction, maxDistance, layerMask);
+        if (allHits.Length == 0)
+        {
+            hitInfo = new RaycastHit();
+            return false;
+        }
+
+        var furthestHit = new RaycastHit();
+        hitInfo = allHits.Aggregate(furthestHit, (furthest, hit) => furthest.distance < hit.distance ? hit : furthest);
         return true;
     }
 
@@ -175,6 +236,11 @@ public class PaintBrush : MonoBehaviour
         {
             other.GetComponent<WallTile>().PaintWall(this);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Debug.DrawLine(prevRayCastOrigin, prevRayCastDest, Color.red);
     }
 }
 

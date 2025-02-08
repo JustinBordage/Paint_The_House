@@ -2,7 +2,6 @@
 
 public class GenericTile : MonoBehaviour
 {
-    public enum TileType { Wall, Brush, DoorU, DoorL, Window, Wood, Mail, Power, Bush, Vent }
     public TileType tileType = TileType.Wall;
     private TileType prevTileType = TileType.Wall;
 
